@@ -23,6 +23,12 @@ public class BoardFileEntity extends BaseEntity{
     @JoinColumn(name = "board_id")
     private BoardEntity boardEntity; // 부모 entity 타입으로 들어가야함
 
-
+    public static BoardFileEntity toBoardFileEntity(BoardEntity boardEntity, String originalFileName, String storedFileName){
+        BoardFileEntity boardFileEntity = new BoardFileEntity();
+        boardFileEntity.setOriginalFileName(originalFileName);
+        boardFileEntity.setStoredFileName(storedFileName);
+        boardFileEntity.setBoardEntity(boardEntity);
+        return boardFileEntity;
+    }
 
 }

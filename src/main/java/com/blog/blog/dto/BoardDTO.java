@@ -1,10 +1,13 @@
 package com.blog.blog.dto;
 
 import com.blog.blog.entity.BoardEntity;
+import com.blog.blog.entity.BoardFileEntity;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 //DTO (Data Transfer Object)
 @Getter
@@ -22,9 +25,9 @@ public class BoardDTO {
     private LocalDateTime boardCreatedTime; //게시글 작성시간
     private LocalDateTime boardUpdatedTime; //게시글 수정시간
 
-    private MultipartFile boardFile; // save.html -> Controller 파일 받는 용도
-    private String originalFileName; // 원본 파일 이름
-    private String storedFileName; // 서버 저장용 파일 이름 (파일명 중복제거용)
+    private List<MultipartFile> boardFile; // save.html -> Controller 파일 받는 용도
+    private List<String> originalFileName; // 원본 파일 이름
+    private List<String> storedFileName; // 서버 저장용 파일 이름 (파일명 중복제거용)
     private int fileAttached; // 파일 첨부 여부 (첨부1, 미첨부0)
 
     // 생성자
@@ -47,6 +50,20 @@ public class BoardDTO {
         boardDTO.setBoardHits(boardEntity.getBoardHits());
         boardDTO.setBoardCreatedTime(boardEntity.getCreatedTime());
         boardDTO.setBoardUpdatedTime(boardEntity.getUpdatedTime());
+        if(boardEntity.getFileAttached() == 0) {
+            boardDTO.setFileAttached(boardEntity.getFileAttached()); //0
+        }else{
+            List<String>originalFileNameList = new ArrayList<>();
+            List<String>storedFileNameList = new ArrayList<>();
+            boardDTO.setFileAttached(boardEntity.getFileAttached()); //1
+            for(BoardFileEntity boardFileEntity : boardEntity.getBoardFileEntityList()) {
+                originalFileNameList.add(boardFileEntity.getOriginalFileName());
+                storedFileNameList.add(boardFileEntity.getStoredFileName());
+            }
+            boardDTO.setOriginalFileName(originalFileNameList);
+            boardDTO.setStoredFileName(storedFileNameList);
+        }
+
         return boardDTO;
     }
 }
