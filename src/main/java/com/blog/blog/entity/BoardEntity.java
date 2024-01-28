@@ -4,6 +4,10 @@ import com.blog.blog.dto.BoardDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.boot.jaxb.mapping.marshall.FetchTypeMarshalling;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // db테이블 역할을 하는 클래스 (테이블 객체를 구성)
 @Entity
@@ -30,6 +34,12 @@ public class BoardEntity extends BaseEntity{
     @Column
     private int boardHits;
 
+    @Column
+    private int fileAttached; // 1 or 0
+
+    @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BoardFileEntity> boardFileEntityList = new ArrayList<>();
+
     // DTO -> Entity 변환 메소드
     public static BoardEntity toSaveEntity(BoardDTO boardDTO){
         BoardEntity boardEntity = new BoardEntity();
@@ -38,6 +48,7 @@ public class BoardEntity extends BaseEntity{
         boardEntity.setBoardContents(boardDTO.getBoardContents());
         boardEntity.setBoardTitle(boardDTO.getBoardTitle());
         boardEntity.setBoardHits(0);
+        boardEntity.setFileAttached(0); // 파일 미첨부
         return boardEntity;
     }
 
@@ -50,5 +61,10 @@ public class BoardEntity extends BaseEntity{
         boardEntity.setBoardTitle(boardDTO.getBoardTitle());
         boardEntity.setBoardHits(boardDTO.getBoardHits());
         return boardEntity;
+    }
+
+    public static BoardEntity toSaveFileEntity(BoardDTO boardDTO) {
+
+        return null;
     }
 }
